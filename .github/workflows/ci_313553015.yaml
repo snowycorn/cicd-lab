@@ -39,7 +39,7 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-report-313553015
+          name: test-report
           path: reports/vitest-junit.xml
 
       - name: Publish test results
@@ -48,4 +48,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           files: reports/vitest-junit.xml
-          check_name: 'Test Results 313553015'
+          check_name: 'Test Results'
