@@ -9,7 +9,8 @@ describe('Fastify app', () => {
       url: '/health'
     });
 
-    expect(response.statusCode).toBe(200);
+    // 故意製造測試失敗：原本應該是 200，改成 500
+    expect(response.statusCode).toBe(500);
     expect(response.json()).toEqual({ status: 'ok' });
     await app.close();
   });
