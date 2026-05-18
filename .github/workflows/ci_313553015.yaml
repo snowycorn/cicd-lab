@@ -28,7 +28,16 @@ jobs:
         run: npm run typecheck
 
       - name: Prettier check
-        run: npm run format:check
+        run: |
+          OUTPUT=$(npm run format:check 2>&1) || EXIT_CODE=$?
+          if [ -n "$EXIT_CODE" ]; then
+            echo "### ❌ Prettier 格式檢查失敗" >> $GITHUB_STEP_SUMMARY
+            echo "請在本地執行 \`npm run format\` 或 \`npm run lint:fix\` 來自動修復以下問題：" >> $GITHUB_STEP_SUMMARY
+            echo '```text' >> $GITHUB_STEP_SUMMARY
+            echo "$OUTPUT" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit $EXIT_CODE
+          fi
 
       - name: Run tests
         run: |
