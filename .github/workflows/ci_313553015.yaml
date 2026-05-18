@@ -1,0 +1,48 @@
+name: CI 313553015
+
+on:
+  push:
+
+jobs:
+  ci:
+    name: Typecheck, Format & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: TypeScript typecheck
+        run: npm run typecheck
+
+      - name: Prettier check
+        run: npm run format:check
+
+      - name: Run tests
+        run: |
+          mkdir -p reports
+          npm test -- --reporter=default --reporter=junit --outputFile.junit=reports/vitest-junit.xml
+
+      - name: Upload test report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-report-313553015
+          path: reports/vitest-junit.xml
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: reports/vitest-junit.xml
+          check_name: 'Test Results 313553015'

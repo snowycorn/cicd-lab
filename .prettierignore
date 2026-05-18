@@ -1,2 +1,4 @@
 dist/
 node_modules/
+snippets/
+docker-compose.yml
