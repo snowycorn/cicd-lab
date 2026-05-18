@@ -26,7 +26,17 @@ jobs:
 
       - name: TypeScript typecheck
         if: always()
-        run: npm run typecheck
+        run: |
+          OUTPUT=$(NO_COLOR=1 npm run typecheck 2>&1) || EXIT_CODE=$?
+          if [ -n "$EXIT_CODE" ]; then
+            echo "### ❌ TypeScript 型別檢查失敗" >> $GITHUB_STEP_SUMMARY
+            echo '```text' >> $GITHUB_STEP_SUMMARY
+            echo "$OUTPUT" >> $GITHUB_STEP_SUMMARY
+            echo '```' >> $GITHUB_STEP_SUMMARY
+            exit $EXIT_CODE
+          else
+            echo "### ✅ TypeScript 型別檢查通過" >> $GITHUB_STEP_SUMMARY
+          fi
 
       - name: Prettier check
         if: always()
@@ -39,6 +49,8 @@ jobs:
             echo "$OUTPUT" >> $GITHUB_STEP_SUMMARY
             echo '```' >> $GITHUB_STEP_SUMMARY
             exit $EXIT_CODE
+          else
+            echo "### ✅ Prettier 格式檢查通過" >> $GITHUB_STEP_SUMMARY
           fi
 
       - name: Run tests
